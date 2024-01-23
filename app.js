@@ -1,8 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getDatabase, ref, push, onValue } from "firebase/database";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -22,7 +21,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 // Reference to the messages in the database
-const messagesRef = firebase.database().ref('messages');
+const messagesRef = ref(getDatabase(), 'messages');
 
 // Function to send a message
 function sendMessage() {
@@ -30,7 +29,7 @@ function sendMessage() {
   const message = messageInput.value.trim();
 
   if (message !== '') {
-    messagesRef.push({
+    push(messagesRef, {
       text: message,
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
@@ -55,6 +54,6 @@ function displayMessages(snapshot) {
 }
 
 // Listen for changes in the messages
-messagesRef.on('value', (snapshot) => {
+onValue(messagesRef, (snapshot) => {
   displayMessages(snapshot);
 });
